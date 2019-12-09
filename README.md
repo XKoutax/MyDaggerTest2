@@ -1,7 +1,8 @@
 # MyDaggerTest2
 
-In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it. 
+In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: 
 * annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
+* using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
 ## 1. @Inject annotation##
 
@@ -31,3 +32,14 @@ For it to work, ```@Inject``` must be put on fields that are __not__ private or 
 ## 2. @Component annotation##
 
 Interfaces annotated with ```@Component``` are what we are going to use in order to achieve our dependancy injection.
+
+
+
+
+
+- - - - 
+
+## 3. @Module annotaton ##
+
+A module is a class that contributes to the object graph.
+
