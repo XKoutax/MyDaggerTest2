@@ -33,6 +33,50 @@ For it to work, ```@Inject``` must be put on fields that are __not__ private or 
 
 Interfaces annotated with ```@Component``` are what we are going to use in order to achieve our dependancy injection.
 
+```java
+
+@Module
+public class WheelsModule {
+
+    // Since we dont own the Rims class and can't annotate the constructor,
+    // we can just call the constructor ourselves here. The return type MUST be of type Rims.
+    @Provides
+    static Rims provideRims(){
+        return new Rims();
+    }
+
+    // Especially useful if we can't annotate @Inject on constructor,
+    // or if we require some configuration on the object AFTER instantiating it.
+    @Provides
+    static Tires provideTires() {
+        Tires tires = new Tires();
+        tires.inflate();
+        return tires;
+    }
+
+    // Wheels need Rims and Tires. Now, thanks to provideRims and provideTires, dagger knows how to
+    // create Rims and Tires. So now, same as in @Inject-ed constructors, we can pass these objects as arguments.
+    // Dagger will pass these 2 arguments when it will call this method, using our provideRims/provideTires.
+    // (!! in this example, Tires will always be .inflate()-ed.)
+    @Provides
+    static Wheels provideWheels(Rims rims, Tires tires) {
+        return new Wheels(rims, tires);
+    }
+
+}
+```
+
+```java
+@Component(modules = WheelsModule.class)
+public interface CarComponent {
+
+    Car getCar();
+    ...
+}
+```
+
+The WheelsModule class provides Rims and Tires, which are required in order to build a Wheels object. In turn, the getCar() method inside the CarComponent class requires Wheels in order to create an instance of Car. By adding the module to our component ( ```java @Component(modules = WheelsModule.class) ```), dagger knows that whenever CarComponent needs Rims, Tires or Wheels(in this example, we need Wheels in the getCar() method), it will get them from the WheelsModule.
+
 
 
 
