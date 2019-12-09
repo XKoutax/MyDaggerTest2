@@ -4,7 +4,7 @@ In a nutshell, Dagger creates objects and provides them at the right time.  What
 * annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
 * using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
-## 1. @Inject annotation##
+## 1. @Inject annotation ##
 
 ```@Inject``` lets Dagger know how to create classes
 ```java
@@ -29,7 +29,7 @@ For it to work, ```@Inject``` must be put on fields that are __not__ private or 
 
 - - - -
 
-## 2. @Component annotation##
+## 2. @Component annotation ##
 
 Interfaces annotated with ```@Component``` are what we are going to use in order to achieve our dependancy injection.
 
