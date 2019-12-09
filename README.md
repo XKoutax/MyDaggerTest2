@@ -41,5 +41,5 @@ Interfaces annotated with ```@Component``` are what we are going to use in order
 
 ## 3. @Module annotaton ##
 
-A module is a class that contributes to the object graph.
+A module is a class that contributes to the object graph (adds objects to the dependency graph, through the ```@Provides``` methods). Especially useful if we can't annotate ```@Inject``` on constructor, or if we require some configuration on a certain class.
 
