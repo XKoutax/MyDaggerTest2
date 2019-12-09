@@ -7,8 +7,6 @@ import javax.inject.Inject;
 public class Car {
     private static final String TAG = "Car";
 
-
-
     // if we had a field injection here Dagger would
     // 1. call CONSTRUCTOR
     // 2. call/inject FIELD

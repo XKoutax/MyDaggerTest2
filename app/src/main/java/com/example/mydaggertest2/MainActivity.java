@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         car.drive();
 
 
-        //we tell dagger to inject into THIS activity, all the fields which contain @Inject
+        // we tell dagger to inject into THIS activity, all the fields which contain @Inject
         component.inject(this);
         car2.drive();
 
