@@ -28,7 +28,8 @@ public class WheelsModule {
 
     // Wheels need Rims and Tires. Now, thanks to provideRims and provideTires, dagger knows how to
     // create Rims and Tires. So now, same as in @Inject-ed constructors, we can pass these objects as arguments.
-    // Dagger will pass these 2 arguments when it will call this method, using our provideRims/provideTires.(! which means these Tires will be .inflate()-ed.
+    // Dagger will pass these 2 arguments when it will call this method, using our provideRims/provideTires.
+    // (!! which means these Tires will always be .inflate()-ed. )
     @Provides
     static Wheels provideWheels(Rims rims, Tires tires) {
         return new Wheels(rims, tires);
