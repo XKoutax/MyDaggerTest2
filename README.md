@@ -185,3 +185,23 @@ Since dagger can no longer instantiate this constuctor directly, we can remove `
 
 And because of removing ```@Inject```, we can no longer use ```@Binds``` in the DieselEngineModule, because ```@Binds``` does not support any configuration. So we have to replace it with ```@Provides``` back.
 
+```java
+@Module
+public class DieselEngineModule {
+
+    private int horsePower;
+
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Provides
+    Engine provideEngine() {
+        return new DieselEngine(horsePower);
+    }
+}
+```
+We create a field horsePower in out module, which will be set at runtime, through which we will instantiate/provide our DieselEngine.  
+
+Instead of putting ```horsePower``` into the DieselEngine constructor directly in the DieselEngineModule, we could also create a ```@Provides``` method for ```horsePower```, if we would've wanted it to be available in other places as well. The ApplicationContext for example would be a real candidate for this, since we would only have it available at runtime, but we want to use it in many diferent places. For this, we would've passed the ApplicationContext in the constructor of the Module, and then we would've made a ```@Provides``` method which would return this ApplicationContext.
+
