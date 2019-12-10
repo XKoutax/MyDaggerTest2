@@ -1,10 +1,13 @@
 # MyDaggerTest2
 
+##### DAGger - Directed Acyclic Graph  
+
 In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: 
 * annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
 * using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
 ## 1. @Inject
+##### branch 1
 
 ```@Inject``` lets Dagger know how to create classes.
 
@@ -39,6 +42,7 @@ For it to work, ```@Inject``` must be put on fields that are __not__ private or 
 
 
 ## 2. @Component
+##### branch 1
 
 Interfaces annotated with ```@Component``` are what we are going to use in order to achieve our dependancy injection.
 
@@ -59,7 +63,8 @@ The WheelsModule class provides Rims and Tires, which are required in order to b
 
 
 
-## 3. @Module
+## 3. @Module 
+##### branch 1
 
 A module is a class that contributes to the object graph (adds objects to the dependency graph, through the ```@Provides``` methods). Especially useful if we can't annotate ```@Inject``` on constructor, or if we require some configuration on a class __after__ instantiating it.
 
@@ -110,6 +115,7 @@ We provide a new instance of Rims ```provideRims()``` and a new instance of Tire
 
 
 ## 4. @Binds
+##### branch 2
 
 Assume that our Engine class was an interface instead.
 ```java
@@ -159,4 +165,9 @@ public abstract class PetrolEngineModule {
 ```
 ```@Binds``` methods take a single argument, the implementation for the interface we defined as return type.  
 Also, the CarComponent cannot contain more than 1 module for the Engine implmentations module (PetrolEngineModule and DieselEngineModule). That is where we specify the object type for our Engine dependency.
+
+## 5. Stateful Modules 
+##### branch 3
+
+Up to this point, everything we have put into the 
 
