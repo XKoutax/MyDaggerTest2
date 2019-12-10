@@ -6,18 +6,20 @@ In a nutshell, Dagger creates objects and provides them at the right time.  What
 
 ## 1. @Inject annotation ##
 
-```@Inject``` lets Dagger know how to create classes
+```@Inject``` lets Dagger know how to create classes.
 ```java
 @Inject
 public Engine() {
-
 }
-
-...
-
+```
+...java
 @Inject
 public Wheels() {
-
+}
+```
+If the constructor of a class requires as aguments classes that we __own__, we can simply annotate the constructor of our class and the constructor of the required classes with ```@Inject```. This way, dagger will know how to create the classes/arguments that will then be injected into our main class.
+```java
+public Car(Engine engine, Wheels wheels) {
 }
 ```
 
