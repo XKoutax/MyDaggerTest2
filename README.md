@@ -203,5 +203,19 @@ public class DieselEngineModule {
 ```
 We create a field horsePower in out module, which will be set at runtime, through which we will instantiate/provide our DieselEngine.  
 
-_ _Instead of putting ```horsePower``` into the DieselEngine constructor directly in the DieselEngineModule, we could also create a ```@Provides``` method for ```horsePower```, if we would've wanted it to be available in other places as well. The ApplicationContext for example would be a real candidate for this, since we would only have it available at runtime, but we want to use it in many diferent places. For this, we would've passed the ApplicationContext in the constructor of the Module, inorder to save it within the Module's field (```this.appC = appC```), and then we would've made a ```@Provides``` method which would return this ApplicationContext._ _
+_ _Instead of putting ```horsePower``` into the DieselEngine constructor directly in the DieselEngineModule, we could also create a ```@Provides``` method for ```horsePower```, if we would've wanted it to be available in other places as well. The ApplicationContext for example would be a real candidate for this, since we would only have it available at runtime, but we want to use it in many diferent places. For this, we would've passed the ApplicationContext in the constructor of the Module, inorder to save it within the Module's field (```this.appC = appC```), and then we would've made a ```@Provides``` method which would return this ApplicationContext._ _  
 
+Now if we were to rebuild the project, the ```DaggerCarComponent.create();``` will no longer exist/work, because it is only available if none of the modules of the component take arguments over the constructor. Instead, now we have a builder, in which we can build our DieselEngineModule with it's runtime parameter:
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+     super.onCreate(savedInstanceState);
+     setContentView(R.layout.activity_main);
+       
+     CarComponent component = DaggerCarComponent.builder()
+             .dieselEngineModule(new DieselEngineModule(100))
+             .build();
+     car = component.getCar();
+     car.drive();
+}
+```
