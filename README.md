@@ -160,10 +160,26 @@ public abstract class PetrolEngineModule {
 
 }
 ```
+
 ```@Binds``` methods take a single argument, the implementation for the interface we defined as return type.  
-Also, the CarComponent cannot contain more than 1 module for the Engine implmentations module (PetrolEngineModule and DieselEngineModule). That is where we specify the object type for our Engine dependency.
+Also, the CarComponent cannot contain more than 1 module for the Engine implmentations module (PetrolEngineModule and DieselEngineModule). That is where we specify the object type for our Engine dependency.  
+
+! ```@Binds``` does not support any configuration!
 
 ## 5. Stateful Modules 
 
-Up to this point, everything we have put into the 
+__Recap:__ * use ```@Inject``` on the constructor of a class so dagger can instantiate it directly.
+           * for more complex situations, we use ```@Module```s, in which we put either ```@Provides``` or ```@Binds```.
+         
+Up to this point however, everything we have created has to be known at compile time. But what if we had a sitution in which our information comes later, at runtime, for example from a stream or an endpoint. We'd have to pass this data and inject it at runtime.  
+
+What if Engine had a field ```int horsePower``` that got passed in it's constructor:
+```java
+public DieselEngine(int horsePower) {
+    this.horsePower = horsePower;
+}
+```
+Assuming we dont know this value beforehand, and we want to pass it at runtime, when we are building the component.  
+
+Since dagger can no longer instantiate this constuctor directly, we can remove ```@Inject``` from it. Because now we have to call this constructor and pass the ```int horsePower``` value.
 
