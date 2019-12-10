@@ -157,5 +157,6 @@ public abstract class PetrolEngineModule {
 
 }
 ```
-```@Binds``` methods take a single argument, the implementation for the interface we defined as return type 
+```@Binds``` methods take a single argument, the implementation for the interface we defined as return type.  
+Also, the CarComponent cannot contain more than 1 module for the Engine implmentations module (PetrolEngineModule and DieselEngineModule). That is where we specify the object type for our Engine dependency.
 
