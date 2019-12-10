@@ -1,9 +1,9 @@
 # MyDaggerTest2
 
 ## Branches
-##### * 1.module-and-provides
-##### * 2. binds-annotation
-##### * 3. stateful-modules
+* ##### 1.module-and-provides
+* ##### 2. binds-annotation
+* ##### 3. stateful-modules
 
 
 
