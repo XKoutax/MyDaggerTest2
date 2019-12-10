@@ -1,10 +1,13 @@
 # MyDaggerTest2
 
+##### DAGger - Directed Acyclic Graph  
+
 In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: 
 * annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
 * using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
-## 1. @Inject
+## 1. @Inject 
+
 
 ```@Inject``` lets Dagger know how to create classes.
 
@@ -59,7 +62,7 @@ The WheelsModule class provides Rims and Tires, which are required in order to b
 
 
 
-## 3. @Module
+## 3. @Module 
 
 A module is a class that contributes to the object graph (adds objects to the dependency graph, through the ```@Provides``` methods). Especially useful if we can't annotate ```@Inject``` on constructor, or if we require some configuration on a class __after__ instantiating it.
 
@@ -157,6 +160,89 @@ public abstract class PetrolEngineModule {
 
 }
 ```
+
 ```@Binds``` methods take a single argument, the implementation for the interface we defined as return type.  
-Also, the CarComponent cannot contain more than 1 module for the Engine implmentations module (PetrolEngineModule and DieselEngineModule). That is where we specify the object type for our Engine dependency.
+Also, the CarComponent cannot contain more than 1 module for the Engine implmentations module (PetrolEngineModule and DieselEngineModule). That is where we specify the object type for our Engine dependency.  
+
+! ```@Binds``` does not support any configuration!
+
+## 5. Stateful Modules 
+
+__Recap:__ * use ```@Inject``` on the constructor of a class so dagger can instantiate it directly.
+           * for more complex situations, we use ```@Module```s, in which we put either ```@Provides``` or ```@Binds```.
+         
+Up to this point however, everything we have created has to be known at compile time. But what if we had a sitution in which our information comes later, at runtime, for example from a stream or an endpoint. We'd have to pass this data and inject it at runtime.  
+
+What if Engine had a field ```int horsePower``` that got passed in it's constructor:
+```java
+public DieselEngine(int horsePower) {
+    this.horsePower = horsePower;
+}
+```
+Assuming we dont know this value beforehand, and we want to pass it at runtime, when we are building the component.  
+
+Since dagger can no longer instantiate this constuctor directly, we can remove ```@Inject``` from it. Because now we have to call this constructor and pass the ```int horsePower``` value.  
+
+And because of removing ```@Inject```, we can no longer use ```@Binds``` in the DieselEngineModule, because ```@Binds``` does not support any configuration. So we have to replace it with ```@Provides``` back.
+
+```java
+@Module
+public class DieselEngineModule {
+
+    private int horsePower;
+
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Provides
+    Engine provideEngine() {
+        return new DieselEngine(horsePower);
+    }
+}
+```
+We create a field horsePower in out module, which will be set at runtime, through which we will instantiate/provide our DieselEngine.  
+
+_Instead of putting ```horsePower``` into the DieselEngine constructor directly in the DieselEngineModule, we could also create a ```@Provides``` method for ```horsePower```, if we would've wanted it to be available in other places as well. The ApplicationContext for example would be a real candidate for this, since we would only have it available at runtime, but we want to use it in many diferent places. For this, we would've passed the ApplicationContext in the constructor of the Module, inorder to save it within the Module's field (```this.appC = appC```), and then we would've made a ```@Provides``` method which would return this ApplicationContext._  
+
+Now if we were to rebuild the project, the ```DaggerCarComponent.create();``` will no longer exist/work, because it is only available if none of the modules of the component take arguments over the constructor. Instead, now we have a builder, in which we can build our DieselEngineModule with it's runtime parameter:
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+     super.onCreate(savedInstanceState);
+     setContentView(R.layout.activity_main);
+       
+     CarComponent component = DaggerCarComponent.builder()
+             .dieselEngineModule(new DieselEngineModule(100))
+             .build();
+     car = component.getCar();
+     car.drive();
+}
+```
+Notice the deprecared generated method inside out builder: ```wheelsModule()```. Checking the method description and implementation will say:  
+
+```java
+/**
+* @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
+*/
+@Deprecated
+public Builder wheelsModule(WheelsModule wheelsModule) {
+  Preconditions.checkNotNull(wheelsModule);
+  return this;
+}
+```
+
+This is because our WheelsModule contains __only__ static methods. We don't need an instance of our wheelsModule, unlike the dieselEngineModule. We need an instante of dieselEngineModule in order to add a variable into it at runtime(```horsePower```). In WheelsModule however, dagger can simply call it's methods, which are all static, without ever instantiating the class.  
+
+An even better optimisation would be to make the WheelsModule class abstract. After rebuilding, the generated method for wheelsModule dissapears altogether, since abstract classes can't be instantiated. Another benefit of this is that dagger will not compile unless all classes of the abstract Module are static.  
+
+_In other words, if all Module methods are static, you should make that module abstract._  
+
+
+
+- - - -
+
+
+
+## 6. @Component.Builder, @BindsInstance and @Named
 
