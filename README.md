@@ -1,5 +1,10 @@
 # MyDaggerTest2
 
+## Branches
+##### 1.module-and-provides
+##### 2. binds-annotation
+##### 3. stateful-modules
+
 ##### DAGger - Directed Acyclic Graph  
 
 In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: 
