@@ -109,5 +109,32 @@ We provide a new instance of Rims ```provideRims()``` and a new instance of Tire
 
 
 
-## 4.Binds
+## 4. @Binds
 
+Assume that our Engine class was an interface instead.
+```java
+public interface Engine {
+    void start();
+}
+```
+Firstly, we no longer have a constructor, so we have nothing to annotate with ```@Inject```.  Secondly and most importantly, dagger won't know what implementation of Engine to use when creating a Car. 
+For 2 implementations of the Engine interface, we can't just annotate both of them with ```@Inject```, since they can both fit in the constructor of the Car, and dagger won't choose one randomly.
+
+We must create a Module. 
+```java
+@Module
+public class PetrolEngineModule {
+    @Provides
+    Engine provideEngine(PetrolEngine engine) {
+        return engine;
+    }
+}
+```
+And add it to the CarComponent list of modules
+```java
+@Component(modules = {
+        WheelsModule.class,
+        PetrolEngineModule.class})
+public interface CarComponent {
+     ...
+```
