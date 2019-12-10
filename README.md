@@ -219,3 +219,30 @@ protected void onCreate(Bundle savedInstanceState) {
      car.drive();
 }
 ```
+Notice the deprecared generated method inside out builder: ```wheelsModule()```. Checking the method description and implementation will say:  
+
+```java
+/**
+* @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
+*/
+@Deprecated
+public Builder wheelsModule(WheelsModule wheelsModule) {
+  Preconditions.checkNotNull(wheelsModule);
+  return this;
+}
+```
+
+This is because our WheelsModule contains __only__ static methods. We don't need an instance of our wheelsModule, unlike the dieselEngineModule. We need an instante of dieselEngineModule in order to add a variable into it at runtime(```horsePower```). In WheelsModule however, dagger can simply call it's methods, which are all static, without ever instantiating the class.  
+
+An even better optimisation would be to make the WheelsModule class abstract. After rebuilding, the generated method for wheelsModule dissapears altogether, since abstract classes can't be instantiated. Another benefit of this is that dagger will not compile unless all classes of the abstract Module are static.  
+
+_In other words, if all Module methods are static, you should make that module abstract._  
+
+
+
+- - - -
+
+
+
+## 6. @Component.Builder, @BindsInstance and @Named
+
