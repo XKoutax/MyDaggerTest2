@@ -1,9 +1,12 @@
 package com.example.mydaggertest2.di;
 
-import com.example.mydaggertest2.Rims;
-import com.example.mydaggertest2.Tires;
-import com.example.mydaggertest2.Wheels;
+import com.example.mydaggertest2.car.DieselEngine;
+import com.example.mydaggertest2.car.Engine;
+import com.example.mydaggertest2.car.Rims;
+import com.example.mydaggertest2.car.Tires;
+import com.example.mydaggertest2.car.Wheels;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
@@ -34,5 +37,6 @@ public class WheelsModule {
     static Wheels provideWheels(Rims rims, Tires tires) {
         return new Wheels(rims, tires);
     }
+
 
 }

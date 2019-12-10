@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mydaggertest2.car.Car;
 import com.example.mydaggertest2.di.CarComponent;
 import com.example.mydaggertest2.di.DaggerCarComponent;
 
