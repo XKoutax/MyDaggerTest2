@@ -181,5 +181,7 @@ public DieselEngine(int horsePower) {
 ```
 Assuming we dont know this value beforehand, and we want to pass it at runtime, when we are building the component.  
 
-Since dagger can no longer instantiate this constuctor directly, we can remove ```@Inject``` from it. Because now we have to call this constructor and pass the ```int horsePower``` value.
+Since dagger can no longer instantiate this constuctor directly, we can remove ```@Inject``` from it. Because now we have to call this constructor and pass the ```int horsePower``` value.  
+
+And because of removing ```@Inject```, we can no longer use ```@Binds``` in the DieselEngineModule, because ```@Binds``` does not support any configuration. So we have to replace it with ```@Provides``` back.
 
