@@ -33,11 +33,35 @@ For it to work, ```@Inject``` must be put on fields that are __not__ private or 
 * either have the constructor injected as well (using the ```@Inject``` annotation)
 * either trigger the injection using the ```CarComponent.inject(MainAcitivty mainActivity);``` method in our main activity, letting dagger know to inject all the necessary field from our MainActivity class. This is especially useful when we can't use constructor injection (in Activities / Fragment for example)
 
+
 - - - -
+
+
 
 ## 2. @Component annotation ##
 
 Interfaces annotated with ```@Component``` are what we are going to use in order to achieve our dependancy injection.
+
+```java
+@Component(modules = WheelsModule.class)
+public interface CarComponent {
+
+    Car getCar();
+    ...
+}
+```
+
+The WheelsModule class provides Rims and Tires, which are required in order to build a Wheels object. In turn, the getCar() method inside the CarComponent class requires Wheels in order to create an instance of Car. By adding the module to our component ( ```java @Component(modules = WheelsModule.class) ```), dagger knows that whenever CarComponent needs Rims, Tires or Wheels(in this example, we need Wheels in the getCar() method), it will get them from the WheelsModule.
+
+
+
+- - - - 
+
+
+
+## 3. @Module annotaton ##
+
+A module is a class that contributes to the object graph (adds objects to the dependency graph, through the ```@Provides``` methods). Especially useful if we can't annotate ```@Inject``` on constructor, or if we require some configuration on a class __after__ instantiating it.
 
 ```java
 
@@ -72,24 +96,17 @@ public class WheelsModule {
 }
 ```
 
-```java
-@Component(modules = WheelsModule.class)
-public interface CarComponent {
+In order for a Module class to provide an object of a certain type, the return type of the ```provide``` method must be that object. Also for efficiency, if possible (no stateful parameters -parametes which depends on the curent state of the app- are required), provide methods should always be static. This way, the generated code won't have to create an instance of our Module class, instead it will simply call the static methods.
 
-    Car getCar();
-    ...
-}
-```
+```@Provides```  is especially useful if we can't annotate @Inject on constructor, or if we require some configuration on the object __after__ instantiating it. Most cases with 3rd party libraries.  
 
-The WheelsModule class provides Rims and Tires, which are required in order to build a Wheels object. In turn, the getCar() method inside the CarComponent class requires Wheels in order to create an instance of Car. By adding the module to our component ( ```java @Component(modules = WheelsModule.class) ```), dagger knows that whenever CarComponent needs Rims, Tires or Wheels(in this example, we need Wheels in the getCar() method), it will get them from the WheelsModule.
+In this example, we provide a new instance of Rims and a new instance of Tires, the latter requiring some configuration ( ```java .inflate()``` ). Now, after we've also added this module into our CarComponent class, we should be able to create inject Rims and Tires which need to be injected for creating Wheels, which in turn will be required for creating a Car.
 
 
 
+- - - -
 
 
-- - - - 
 
-## 3. @Module annotaton ##
-
-A module is a class that contributes to the object graph (adds objects to the dependency graph, through the ```@Provides``` methods). Especially useful if we can't annotate ```@Inject``` on constructor, or if we require some configuration on a class __after__ instantiating it.
+## 4.Binds
 
