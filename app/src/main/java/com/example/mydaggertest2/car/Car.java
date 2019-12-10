@@ -55,8 +55,15 @@ public class Car {
         this.wheels = wheels;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     public void drive() {
         engine.start();
-        Log.d(TAG, "driving...");
+        Log.d(TAG, "driving... " + hashCode());
     }
+
+
 }

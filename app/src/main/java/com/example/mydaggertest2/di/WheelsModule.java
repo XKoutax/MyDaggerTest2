@@ -11,7 +11,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class WheelsModule {
+public abstract class WheelsModule {
 
     // Since we dont own the Rims class and can't annotate the constructor,
     // we can just call the constructor ourselves here. The return type MUST be of type Rims.

@@ -10,7 +10,7 @@ import dagger.Component;
 // it will get them from the WheelsModule.
 @Component(modules = {
         WheelsModule.class,
-        PetrolEngineModule.class,
+        DieselEngineModule.class,
         })
 public interface CarComponent {
 
