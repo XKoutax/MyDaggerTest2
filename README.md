@@ -4,7 +4,7 @@ In a nutshell, Dagger creates objects and provides them at the right time.  What
 * annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
 * using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
-## 1. @Inject annotation ##
+## 1. @Inject
 
 ```@Inject``` lets Dagger know how to create classes.
 
@@ -38,7 +38,7 @@ For it to work, ```@Inject``` must be put on fields that are __not__ private or 
 
 
 
-## 2. @Component annotation ##
+## 2. @Component
 
 Interfaces annotated with ```@Component``` are what we are going to use in order to achieve our dependancy injection.
 
@@ -59,7 +59,7 @@ The WheelsModule class provides Rims and Tires, which are required in order to b
 
 
 
-## 3. @Module annotaton ##
+## 3. @Module
 
 A module is a class that contributes to the object graph (adds objects to the dependency graph, through the ```@Provides``` methods). Especially useful if we can't annotate ```@Inject``` on constructor, or if we require some configuration on a class __after__ instantiating it.
 
