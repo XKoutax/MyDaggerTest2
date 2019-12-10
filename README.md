@@ -120,7 +120,7 @@ public interface Engine {
 Firstly, we no longer have a constructor, so we have nothing to annotate with ```@Inject```.  Secondly and most importantly, dagger won't know what implementation of Engine to use when creating a Car. 
 For 2 implementations of the Engine interface, we can't just annotate both of them with ```@Inject```, since they can both fit in the constructor of the Car, and dagger won't choose one randomly.
 
-We must create a Module. 
+We should create a Module, which should ```@Provide``` the necessery engine.
 ```java
 @Module
 public class PetrolEngineModule {
@@ -137,4 +137,25 @@ And add it to the CarComponent list of modules
         PetrolEngineModule.class})
 public interface CarComponent {
      ...
+}
 ```
+Now it should work. But to make it easier and more efficient, instead of our current ```provideEngine(...)``` method, we can instead use a ```@Binds``` method. A method annotated with ```@Binds``` does exactly that, bind an implementation of an interface/abstract to the required field of its base type (PetrolEngine -----> Engine).  
+
+Methods that use ```@Binds``` must be abstract, therefore must reside in abstract classes.
+```java
+
+@Module
+public abstract class PetrolEngineModule {
+    // this is simpler than writing "engine" 5 times like in the previous method. And more efficient.
+    // Use a PetrolEngine(argument) and BIND it to the Engine field(method return type)
+    // should always use @Binds for such cases (intefaces/abstracts and their implementations)
+   
+    @Binds
+    abstract Engine bindEngine(PetrolEngine engine);
+
+    // NOTE: abstract methods are never instantiated, so we can't use normal @Provides methods, only static @Provides methods
+
+}
+```
+```@Binds``` methods take a single argument, the implementation for the interface we defined as return type 
+
