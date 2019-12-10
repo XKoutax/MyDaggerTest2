@@ -100,7 +100,7 @@ In order for a Module class to provide an object of a certain type, the return t
 
 ```@Provides```  is especially useful if we can't annotate @Inject on constructor, or if we require some configuration on the object __after__ instantiating it. Most cases with 3rd party libraries.  
 
-In this example, we provide a new instance of Rims and a new instance of Tires, the latter requiring some configuration ( ```java .inflate()``` ). Now, after we've also added this module into our CarComponent class, we should be able to create inject Rims and Tires which need to be injected for creating Wheels, which in turn will be required for creating a Car.
+In this example, we assume that both the Wheels class and the classes that it needs are not our own, therefore we can't ```@Inject``` their constuctors. We provide a new instance of Rims ```java provideRims()``` and a new instance of Tires ```java ProvideTires()```, the latter requiring some configuration ( ```java .inflate()``` ). Now, after we've also added this module into our CarComponent class, we should be able to create inject Rims and Tires which need to be injected for creating Wheels, which in turn will be required for creating a Car.
 
 
 
