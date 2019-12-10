@@ -1,9 +1,5 @@
 # MyDaggerTest2
 
-- - - -
-
-
-
 ##### DAGger - Directed Acyclic Graph  
 
 In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: 
