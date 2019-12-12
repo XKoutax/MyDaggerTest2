@@ -244,5 +244,39 @@ _In other words, if all Module methods are static, you should make that module a
 
 
 
+### 5.1 ```@Provides``` method for ```horsePower```
+
+Create the providesHorsePower() method inside our DieselEngineModule.
+```java
+@Inject
+int provideHorsePower() {
+    return horsePower;
+}
+```
+Now, in order for it to be injected, we need to annotate the constructor of ```DieselEngine```:
+```java
+@Inject
+public DieselEngine(int horsePower) {
+    this.horsePower = horsePower;
+}
+```
+And finally, now we don't need to instantiate our ``` DieselEngine``` object in our provideEngine method, since dagger will do that for us, now that it knows how to create it and it's dependancies:
+```java
+@Provides
+Engine provideEngine(DieselEngine dieselEngine) {
+    return dieselEngine;
+}
+```
+The code should still work after doing these changes.  
+This basicaly means for dagger that __whenever__ we need an ```int```, it will use this ```int provideHorsePower()``` method. Note that this don't mention using it for the ```horsePower``` variable alone, but for any integer. Dagger will only care about the return type.
+
+And now that we have have separated ```@Provides``` horsepower from the dieselEngine, we should separate them in different modules, so we could use them independently from each other. Instead of doing that however, we'll take a look at a different approach..
+
+
+
+- - - - 
+
+
+
 ## 6. @Component.Builder, @BindsInstance and @Named
 
