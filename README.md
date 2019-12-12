@@ -248,7 +248,7 @@ _In other words, if all Module methods are static, you should make that module a
 
 Create the providesHorsePower() method inside our DieselEngineModule.
 ```java
-@Inject
+@Provides
 int provideHorsePower() {
     return horsePower;
 }
