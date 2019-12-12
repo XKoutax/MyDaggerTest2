@@ -244,5 +244,197 @@ _In other words, if all Module methods are static, you should make that module a
 
 
 
+### 5.1 ```@Provides``` method for ```horsePower```
+
+Create the providesHorsePower() method inside our DieselEngineModule.
+```java
+@Provides
+int provideHorsePower() {
+    return horsePower;
+}
+```
+Now, in order for it to be injected, we need to annotate the constructor of ```DieselEngine```:
+```java
+@Inject
+public DieselEngine(int horsePower) {
+    this.horsePower = horsePower;
+}
+```
+And finally, now we don't need to instantiate our ``` DieselEngine``` object in our provideEngine method, since dagger will do that for us, now that it knows how to create it and it's dependancies:
+```java
+@Provides
+Engine provideEngine(DieselEngine dieselEngine) {
+    return dieselEngine;
+}
+```
+The code should still work after doing these changes.  
+This basicaly means for dagger that __whenever__ we need an ```int```, it will use this ```int provideHorsePower()``` method. Note that this don't mention using it for the ```horsePower``` variable alone, but for any integer. Dagger will only care about the return type.
+
+And now that we have have separated ```@Provides``` horsepower from the dieselEngine, we should separate them in different modules, so we could use them independently from each other. 
+
+
+
+- - - - 
+
+
+
 ## 6. @Component.Builder, @BindsInstance and @Named
+
+### 6.1  ```@Component.Builder``` and ```@BindsInstance```
+
+In MainActivity, instead of passing our horsePower integer to the Module, which is then passed to the builder
+```java
+CarComponent component = DaggerCarComponent.builder()
+                .dieselEngineModule(new DieselEngineModule(100))
+                .build();
+```
+we can pass the horsePower integer to the builder directly.  
+
+First, we must go into ```PetrolEngine``` and change it similary to DieselEngine, so it needs a horsePower as well.
+```java
+public class PetrolEngine implements Engine {
+    private static final String TAG = "Car";
+
+    private int horsePower;
+
+    @Inject
+    public PetrolEngine(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Override
+    public void start() {
+        Log.d(TAG, "Petrol engine started. Horsepower = " + horsePower);
+    }
+}
+```
+And now we still want to pass the horsePower integer at runtime, but we will do it in a different way.  
+
+Inside ```CarComponent``` interface, we create a nested interface ```Builder```, and annotate it with ```@Component.Builder```. This is where we will define our API for our CarComponent builder (DaggerCarComponent.builder().myAPImethod().2ndAPImethod(). ...)
+```java
+@Component(modules = {
+        WheelsModule.class,
+        PetrolEngineModule.class,
+        })
+public interface CarComponent {
+
+    Car getCar();
+
+    void inject(MainActivity mainActivity);
+
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder horsePower(int horsePower);
+
+        // dagger will automaticaly implement this method, we just have to declare it, because
+        // we are overwriting the builder definition
+        CarComponent build();
+    }
+    
+}
+```
+The ```MyComponent build()``` method is always neccessery when overwriting the ```Builder``` definition.  
+The ```@BindsInstance``` annotation is used to add variables into our dependency graph at runtime, which has the same effect as passing the variable at runtime to a module and providing it over a ```@Provides``` method. But it is more efficient because daggr doesn't need to create an instance of the Module.
+
+And now we've created the method ```horsePower(int horsePower)``` where we will bind the integer, which we will pass in MainActivity into our CarComponent builder. The Builder return type is simply used for the _builder pattern_, so we can chain builder methods.  
+
+Now our CarComponent will look like this:
+```java
+CarComponent component = DaggerCarComponent.builder()
+                .horsePower(150)
+                .build();
+```
+Now similary to our ```@Provides int provideHorsePower``` method in our ```DieselEngineModule```, this "150" value will be added to the dependency graph, and dagger can use it whenever we need an integer. Which is now the case in our ```PetrolEngineModule``` when we inject the constructor for the ```PetrolEngine``` object.  
+
+The difference is that unlike ```DieselEngineModule```, our ```PetrolEngineModule``` is stil abstract , only contains our @Binds method, and doesn't need to have anything(horsePower) passed into it:
+```java
+@Module
+public abstract class PetrolEngineModule {
+    @Binds
+    abstract Engine bindEngine(PetrolEngine engine);
+}
+```
+So dagger still doesn't have to instantiate it, which makes the code more efficient.So ```@BindsInstance``` with ```@Component.Builder``` should always be prefered over Module constructor arguments whenever possible. Keep in mind also that the naming of the method inside our Builder is purely arbitrary, dagger will simply look to bind an integer inside the Modules of our Component.  
+
+
+###  6.2 ```@Named```
+
+Let's add another integer inside PetrolEngine, engineCapacity:
+```java
+public class PetrolEngine implements Engine {
+    private static final String TAG = "Car";
+
+    private int horsePower;
+    private int engineCapacity;
+
+    @Inject
+    public PetrolEngine(int horsePower, int engineCapacity) {
+        this.horsePower = horsePower;
+        this.engineCapacity = engineCapacity;
+    }
+
+    @Override
+    public void start() {
+        Log.d(TAG, "Petrol engine started. " +
+                "\nHorsepower = " + horsePower +
+                "\nEngine capacity = " + engineCapacity);
+    }
+}
+```
+If we run the code now, it will work, and engineCapacity will show as 150. Because when we added the integer to our dependency graph (either through ```@BindsInstance Builder horsePower(int horsePower)``` or through our ```@Provides int provideHorsePower() { return horsePower;} ``` method), we tell dagger that whenever an integer is needed, use this integer value. For any integer that must be provided.
+
+Only the object type matters, not the naming. We could've just named them  ```@BindsInstance Builder intValue(int x)``` and ```@Provides int provideSomeInteger() { return someInteger;} ```.  
+
+Now, if we add another integer at runtime:
+```java
+@Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder horsePower(int horsePower);
+
+        @BindsInstance
+        Builder engineCapacity(int engineCapacity);
+
+        CarComponent build();
+    }
+```
+and pass it to the CarComponent builder:
+```java
+CarComponent component = DaggerCarComponent.builder()
+        .horsePower(150)
+        .engineCapacity(1400)
+        .build();
+```
+We'll get a compile-time error, ``` error: [Dagger/DuplicateBindings] java.lang.Integer is bound multiple times: ... ```. Because now dagger doesn't know which integer to use. In order to fix this problem, we need to name our dependancies, using ```@Named(...)```.
+```java
+@Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder horsePower(@Named("horse power")int horsePower);
+
+        @BindsInstance
+        Builder engineCapacity(@Named("engine capacity")int engineCapacity);
+
+        CarComponent build();
+    }
+```
+And now we need to do the same in the places where we need those values. In our ```PetrolEngine```, in the constructor:
+```java
+@Inject
+public PetrolEngine(@Named("horse power") int horsePower,
+                    @Named("engine capacity")int engineCapacity) {
+    this.horsePower = horsePower;
+    this.engineCapacity = engineCapacity;
+}
+```
+And now the 2 parameters of PetrolEngine should show the proper integers, 150 and 1400.  
+
+We can use this ```@Named``` annotation wherever we have to provide or consume dependencies (```@Provides``` methods and ```@Inject``` annotated fields). Dagger distinguishes between same-type dependencies using these annotations.  
+
+(Now it would make sense to change our ```DieselEngineModule``` into an abstract class as well, for efficiency.)
+
+_One way to avoid using string tags("horse power","engine capacity") that may be error prone, is by creating our own annotations (```@EngineCapacity``` for example)._
+
 
