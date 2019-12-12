@@ -270,7 +270,7 @@ Engine provideEngine(DieselEngine dieselEngine) {
 The code should still work after doing these changes.  
 This basicaly means for dagger that __whenever__ we need an ```int```, it will use this ```int provideHorsePower()``` method. Note that this don't mention using it for the ```horsePower``` variable alone, but for any integer. Dagger will only care about the return type.
 
-And now that we have have separated ```@Provides``` horsepower from the dieselEngine, we should separate them in different modules, so we could use them independently from each other. Instead of doing that however, we'll take a look at a different approach..
+And now that we have have separated ```@Provides``` horsepower from the dieselEngine, we should separate them in different modules, so we could use them independently from each other. 
 
 
 
@@ -279,4 +279,70 @@ And now that we have have separated ```@Provides``` horsepower from the dieselEn
 
 
 ## 6. @Component.Builder, @BindsInstance and @Named
+
+In MainActivity, instead of passing our horsePower integer to the Module, which is then passed to the builder
+```java
+CarComponent component = DaggerCarComponent.builder()
+                .dieselEngineModule(new DieselEngineModule(100))
+                .build();
+```
+we can pass the horsePower integer to the builder directly.  
+
+First, we must go into ```PetrolEngine``` and change it similary to DieselEngine, so it needs a horsePower as well.
+```java
+public class PetrolEngine implements Engine {
+    private static final String TAG = "Car";
+
+    private int horsePower;
+
+    @Inject
+    public PetrolEngine(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Override
+    public void start() {
+        Log.d(TAG, "Petrol engine started. Horsepower = " + horsePower);
+    }
+}
+```
+And now we still want to pass the horsePower integer at runtime, but we will do it in a different way.  
+
+Inside ```CarComponent``` interface, we create a nested interface ```Builder```, and annotate it with ```@Component.Builder```. This is where we will define our API for our CarComponent builder (DaggerCarComponent.builder().myAPImethod().2ndAPImethod(). ...)
+```java
+@Component(modules = {
+        WheelsModule.class,
+        PetrolEngineModule.class,
+        })
+public interface CarComponent {
+
+    Car getCar();
+
+    void inject(MainActivity mainActivity);
+
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder horsePower(int horsePower);
+
+        // dagger will automaticaly implement this method, we just have to declare it, because
+        // we are overwriting the builder definition
+        CarComponent build();
+    }
+    
+}
+```
+The ```MyComponent build()``` method is always neccessery when overwriting the ```Builder``` definition.  
+
+And now we've created the method ```horsePower(int horsePower)``` where we will bind the integer, which we will pass in MainActivity into our CarComponent builder. The Builder return type is simply used for the _builder pattern_, so we can chain builder methods.  
+
+Now our CarComponent will look like this:
+```java
+CarComponent component = DaggerCarComponent.builder()
+                .horsePower(150)
+                .build();
+```
+Now similary to our ```@Provides horsePower``` method in our module, this "150" value will be added to the dependency graph, and dagger can use it whenever we need an integer. Which is now the case in our ```PetrolEngineModule``` when we inject the constructor for the ```PetrolEngine``` object.
+
 
