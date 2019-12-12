@@ -336,7 +336,7 @@ public interface CarComponent {
 }
 ```
 The ```MyComponent build()``` method is always neccessery when overwriting the ```Builder``` definition.  
-The ```@BindsInstance``` annotation is used to add variables into our dependency graph at runtime 
+The ```@BindsInstance``` annotation is used to add variables into our dependency graph at runtime, which has the same effect as passing the variable at runtime to a module and providing it over a ```@Provides``` method. But it is more efficient because daggr doesn't need to create an instance of the Module.
 
 And now we've created the method ```horsePower(int horsePower)``` where we will bind the integer, which we will pass in MainActivity into our CarComponent builder. The Builder return type is simply used for the _builder pattern_, so we can chain builder methods.  
 
@@ -432,6 +432,8 @@ public PetrolEngine(@Named("horse power") int horsePower,
 And now the 2 parameters of PetrolEngine should show the proper integers, 150 and 1400.  
 
 We can use this ```@Named``` annotation wherever we have to provide or consume dependencies (```@Provides``` methods and ```@Inject``` annotated fields). Dagger distinguishes between same-type dependencies using these annotations.  
+
+(Now it would make sense to change our ```DieselEngineModule``` into an abstract class as well, for efficiency.)
 
 _One way to avoid using string tags("horse power","engine capacity") that may be error prone, is by creating our own annotations (```@EngineCapacity``` for example)._
 
