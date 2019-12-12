@@ -3,6 +3,9 @@ package com.example.mydaggertest2.di;
 import com.example.mydaggertest2.car.Car;
 import com.example.mydaggertest2.MainActivity;
 
+import javax.inject.Named;
+
+import dagger.BindsInstance;
 import dagger.Component;
 
 // now dagger puts WheelsModule into CarComponent, and knows that whenever it needs
@@ -10,7 +13,7 @@ import dagger.Component;
 // it will get them from the WheelsModule.
 @Component(modules = {
         WheelsModule.class,
-        DieselEngineModule.class,
+        PetrolEngineModule.class,
         })
 public interface CarComponent {
 
@@ -18,5 +21,19 @@ public interface CarComponent {
 
     void inject(MainActivity mainActivity);
 
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder horsePower(@Named("horse power") int horsePower);
+
+        @BindsInstance
+        Builder engineCapacity(@Named("engine capacity")int engineCapacity);
+
+        // dagger will automaticaly implement this method, we just have to declare it, because
+        // we are overwriting the builder definition
+        CarComponent build();
+
+    }
 
 }
