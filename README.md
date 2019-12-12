@@ -343,6 +343,17 @@ CarComponent component = DaggerCarComponent.builder()
                 .horsePower(150)
                 .build();
 ```
-Now similary to our ```@Provides horsePower``` method in our module, this "150" value will be added to the dependency graph, and dagger can use it whenever we need an integer. Which is now the case in our ```PetrolEngineModule``` when we inject the constructor for the ```PetrolEngine``` object.
+Now similary to our ```@Provides int provideHorsePower``` method in our ```DieselEngineModule```, this "150" value will be added to the dependency graph, and dagger can use it whenever we need an integer. Which is now the case in our ```PetrolEngineModule``` when we inject the constructor for the ```PetrolEngine``` object.  
 
+The difference is that unlike ```DieselEngineModule```, our ```PetrolEngineModule``` is stil abstract , only contains our @Binds method, and doesn't need to have anything(horsePower) passed into it:
+```java
+@Module
+public abstract class PetrolEngineModule {
+    @Binds
+    abstract Engine bindEngine(PetrolEngine engine);
+}
+```
+So dagger still doesn't have to instantiate it, which makes the code more efficient.  
+
+So @BindsInstance with @Component.Builder should always be prefered over Module constructor arguments whenever possible.
 
