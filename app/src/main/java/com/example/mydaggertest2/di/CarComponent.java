@@ -4,6 +4,7 @@ import com.example.mydaggertest2.car.Car;
 import com.example.mydaggertest2.MainActivity;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import dagger.BindsInstance;
 import dagger.Component;
@@ -11,6 +12,7 @@ import dagger.Component;
 // now dagger puts WheelsModule into CarComponent, and knows that whenever it needs
 // Rims, Tires or Wheels(in this example, we need Wheels in the getCar() method)
 // it will get them from the WheelsModule.
+@Singleton
 @Component(modules = {
         WheelsModule.class,
         PetrolEngineModule.class,

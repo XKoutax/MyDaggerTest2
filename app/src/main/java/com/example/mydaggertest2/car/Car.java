@@ -20,12 +20,15 @@ public class Car {
     // public Engine engine
 
 
+    private Driver driver;
     private Engine engine;
     private Wheels wheels;
 
+
     // constructor injection
     @Inject
-    public Car(Engine engine, Wheels wheels) {
+    public Car(Driver driver, Engine engine, Wheels wheels) {
+        this.driver = driver;
         this.engine = engine;
         this.wheels = wheels;
     }
@@ -55,14 +58,9 @@ public class Car {
         this.wheels = wheels;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
     public void drive() {
         engine.start();
-        Log.d(TAG, "driving... " + hashCode());
+        Log.d(TAG, driver.hashCode() + " drives " + this.hashCode());
     }
 
 

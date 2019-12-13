@@ -7,13 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mydaggertest2.car.Car;
 import com.example.mydaggertest2.di.CarComponent;
 import com.example.mydaggertest2.di.DaggerCarComponent;
-import com.example.mydaggertest2.di.DieselEngineModule;
 
 import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Car car;
+    private Car car1;
 
     // field injection - works only on fields that are NOT private / final
     @Inject
@@ -33,10 +32,13 @@ public class MainActivity extends AppCompatActivity {
                 .horsePower(150)
                 .engineCapacity(1400)
                 .build();
-        car = component.getCar();
-        car.drive();
+
+        // 1.inject the car manually, by calling the getCar() method
+        car1 = component.getCar();
+        car1.drive();
 
 
+        // 2. fill all @Inject fields in this class using their corresponding @Provides
         // we tell dagger to inject into THIS activity, all the fields which contain @Inject
         component.inject(this);
         car2.drive();

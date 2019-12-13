@@ -28,8 +28,4 @@ public class DieselEngineModule {
     }
 
 
-//    @Provides
-//    Engine provideEngine() {
-//        return new DieselEngine(horsePower);
-//    }
 }
