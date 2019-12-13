@@ -463,3 +463,11 @@ Now we'll have the same driver for our 2 different cars.
 
 * If your class doesn't come from an ```@Inject``` annotated constructor, but from a ```@Provides```method, then you have to annotated that ```@Provides``` method directly with the ```@Singleton``` annotation.
 * ```@Binds``` methods (the ones used for binding an interface implementation to the interface-type field) can also be annotated with ```@Singleton```: ```@Binds abstract Engine bindEngine(PetrolEngine engine);```. But in this case it makes more sense to annotated the PetrolEngine directly, because it also has an ```@Inject``` annotated constructor, and ```@Singleton``` scope annotation is more of a implementation detail, not something you want todefine at a level(module) where you just decide which implementation to return for an interface. So usually you wouldn't wanna put ```@Singleton``` on a binds annotation.
+
+__NOTE:__ if we were to create 2 CarComponents and get a car from each, and call our ```.drive()``` method, the Driver object would be different. That is because ```@Singleton``` only works within the same Component object. So, if we want a real application-wide singleton, you have to instantiate the Component once, in the application class (since Application wraps the entire lifetime/lifecycle of the app) and acces the Component from there.
+
+
+- - - -
+
+
+##  7. 
