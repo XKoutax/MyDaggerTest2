@@ -438,3 +438,28 @@ We can use this ```@Named``` annotation wherever we have to provide or consume d
 _One way to avoid using string tags("horse power","engine capacity") that may be error prone, is by creating our own annotations (```@EngineCapacity``` for example)._
 
 
+
+- - - -
+
+
+
+##  7. @Singleton
+
+Add driver class, with an ```@Inject``` constructor, and add it to ```Car```, field and constructor.
+```java
+public class Driver {
+    @Inject
+    public Driver() {
+    }
+}
+```
+If we'll print the Driver object inside car as well, for 2 cars we'll have 2 different drivers(same as ```Car``` and the rest of the objects inside it). But what if we want to have the same driver for all our cars.  
+
+Annotate ```Driver``` class with ```@Singleton```. This should intuitively be enough, but we will get a compile-time error. Because now our Component contains a ```@Singleton``` annotated module. In which case, our Component must also be annotated with ```@Singleton```.  
+
+ _Whenever our ```Components``` contain a ```@Singleton``` module, they must also be annotated as ```@Singleton```._  
+
+Now we'll have the same driver for our 2 different cars.  
+
+* If your class doesn't come from an ```@Inject``` annotated constructor, but from a ```@Provides```method, then you have to annotated that ```@Provides``` method directly with the ```@Singleton``` annotation.
+* ```@Binds``` methods (the ones used for binding an interface implementation to the interface-type field) can also be annotated with ```@Singleton```: ```@Binds abstract Engine bindEngine(PetrolEngine engine);```. But in this case it makes more sense to annotated the PetrolEngine directly, because it also has an ```@Inject``` annotated constructor, and ```@Singleton``` scope annotation is more of a implementation detail, not something you want todefine at a level(module) where you just decide which implementation to return for an interface. So usually you wouldn't wanna put ```@Singleton``` on a binds annotation.
