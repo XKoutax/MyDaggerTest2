@@ -2,9 +2,7 @@
 
 ##### DAGger - Directed Acyclic Graph  
 
-In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: 
-* annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
-* using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
+In a nutshell, Dagger creates objects and provides them at the right time.  What we need to do is tell dagger __how__ to do it: annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor), and using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
 * __@Inject__: marks those dependencies which should be provided by Dependency Injection framework.
 * __@Module__: Marks classes which provide dependencies.
