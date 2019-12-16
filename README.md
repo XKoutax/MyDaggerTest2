@@ -6,10 +6,20 @@ In a nutshell, Dagger creates objects and provides them at the right time.  What
 * annotating the constructor of a class with ```@Inject``` (useful if we __own__ the class and can annotate it's constuctor)
 * using the ```@Provides``` annotation on methods inside modules (classes annotated with ```@Module```)
 
+* __@Inject__: marks those dependencies which should be provided by Dependency Injection framework.
+* __@Module__: Marks classes which provide dependencies.
+* __@Provides__: Used inside module classes to mark methods that return dependencies.
+* __@Component__: Used to build an interface that Dagger will use to generate the code that will do the dependency injection for us.  
+
+
+- - - - 
+
+
+
 ## 1. @Inject 
 
 
-```@Inject``` lets Dagger know how to create classes.
+```@Inject``` essentially lets Dagger know how to create classes.
 
 ```java
 @Inject
