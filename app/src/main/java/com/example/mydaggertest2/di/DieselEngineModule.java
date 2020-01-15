@@ -2,6 +2,7 @@ package com.example.mydaggertest2.di;
 
 import com.example.mydaggertest2.car.DieselEngine;
 import com.example.mydaggertest2.car.Engine;
+import com.example.mydaggertest2.car.PetrolEngine;
 
 import dagger.Binds;
 import dagger.Module;
@@ -15,6 +16,9 @@ public class DieselEngineModule {
     public DieselEngineModule(int horsePower) {
         this.horsePower = horsePower;
     }
+
+//    @Binds
+//    abstract Engine bindEngine(DieselEngine engine);
 
     @Provides
     Engine provideEngine() {
