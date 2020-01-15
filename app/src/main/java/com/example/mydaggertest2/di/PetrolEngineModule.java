@@ -1,7 +1,7 @@
 package com.example.mydaggertest2.di;
 
-import com.example.mydaggertest2.car.Engine;
-import com.example.mydaggertest2.car.PetrolEngine;
+import com.example.mydaggertest2.car.engine.Engine;
+import com.example.mydaggertest2.car.engine.PetrolEngine;
 
 import dagger.Binds;
 import dagger.Module;

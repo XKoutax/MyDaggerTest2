@@ -33,13 +33,17 @@ public class MainActivity extends AppCompatActivity {
                 .engineCapacity(1400)
                 .build();
 
-        // 1.inject the car manually, by calling the getCar() method
+
+        // 1. Inject the car manually, by calling the getCar() method
         car1 = component.getCar();
         car1.drive();
 
 
-        // 2. fill all @Inject fields in this class using their corresponding @Provides
-        // we tell dagger to inject into THIS activity, all the fields which contain @Inject
+        // 2. Fill all @Inject fields in this class (MainActivity) using their corresponding @Provides
+        // we tell dagger to inject into THIS activity, ALL the fields which contain @Inject.
+        // By calling .inject() on the component it will tell the framework to go through the class
+        // and inject everything with the @Inject annotation. It will use the dependencies available
+        // to the component to provide the fields/constructors with the concrete classes they require.
         component.inject(this);
         car2.drive();
 

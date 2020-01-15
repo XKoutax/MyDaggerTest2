@@ -1,7 +1,9 @@
 package com.example.mydaggertest2.car;
  
 import android.util.Log;
- 
+
+import com.example.mydaggertest2.car.engine.Engine;
+
 import javax.inject.Inject;
  
 public class Car {
