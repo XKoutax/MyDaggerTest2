@@ -446,6 +446,73 @@ We can use this ```@Named``` annotation wherever we have to provide or consume d
 _One way to avoid using string tags("horse power","engine capacity") that may be error prone, is by creating our own annotations (```@EngineCapacity``` for example)._
 
 
+Now, with our custom ```Component.Builder``` , if we wanted to switch back to DieselEngineModule (replace ```PetrolEngineModule``` with ```DieselEngineModule``` in out CarComponent) and run the app, we'd the an error:  
+
+```@Component.Builder is missing setters for required modules or components: [com.example.mydaggertest2.di.DieselEngineModule]```  
+
+What this means is that our Component/Builder does not know how to create a DieselEngineModule. That is because the ```DieselEngineModule``` constructor is parameterized. Dagger knows how to create an empty constructor, but in case the constructor has parameters, it doesn't know where to get them from.  
+
+In order to fix this, we can:  
+* 1. Create the module ourselves, in the Builder:
+```java
+@Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder horsePower(@Named("horse power") int horsePower);
+
+        @BindsInstance
+        Builder engineCapacity(@Named("engine capacity")int engineCapacity);
+
+        Builder dieselEngineModule(DieselEngineModule dem);
+
+        CarComponent build();
+
+    }
+```
+and declare it when we create the component (in this case, in MainActivity):
+```java
+CarComponent component = DaggerCarComponent.builder()
+                .dieselEngineModule(new DieselEngineModule(100))
+                .horsePower(150)
+                .engineCapacity(1400)
+                .build();
+```
+
+* 2. Bind the parameter.  
+Same as our ```PetrolEngineModule```, remove the parameter from the constructor. Add the integer inside our ```Component.Builder``` and change the provideHorsePower as such:
+```java
+ @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder horsePower(@Named("horse power") int horsePower);
+
+        @BindsInstance
+        Builder engineCapacity(@Named("engine capacity")int engineCapacity);
+
+        @BindsInstance
+        Builder moduleParam(@Named("dieselParam")int someNumber);
+
+        CarComponent build();
+
+    }
+```
+    
+    
+```java
+    @Provides
+    int provideHorsePower(@Named("dieselParam") int horsePower) {
+        return horsePower;
+    }
+    
+    @Provides
+    Engine provideEngine(DieselEngine dieselEngine) {
+        return dieselEngine;
+    }
+```
+Now the ```provideEngine(DieselEngine dieselEngine)``` method will be provided with the horsePower from the ```@Provides provideHorsePower(@Named("dieselParam") int horsePower)``` method. Now however, we are no longer saving the horsePower value inside our DieselEngineModule, since it's never set anymore.
+
 
 - - - -
 
