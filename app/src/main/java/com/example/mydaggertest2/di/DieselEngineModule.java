@@ -14,11 +14,7 @@ import dagger.Provides;
 public class DieselEngineModule {
 
     private int horsePower;
-
-    public DieselEngineModule(int horsePower) {
-        this.horsePower = horsePower;
-    }
-
+//
 //    public DieselEngineModule() {
 //
 //    }
@@ -28,12 +24,14 @@ public class DieselEngineModule {
 //        return horsePower;
 //    }
 
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
     @Provides
     int provideHorsePower(int horsePower) {
         return horsePower;
     }
-
-
 
 //    We no longer need to manually instantiate DieselEngine obj using "new DieselEngine(horsePower)".
 //    Because we created a "provideHorsePower()" method, and we @Inject-ed the constructor of
@@ -42,6 +40,4 @@ public class DieselEngineModule {
     Engine provideEngine(DieselEngine dieselEngine) {
         return dieselEngine;
     }
-
-
 }

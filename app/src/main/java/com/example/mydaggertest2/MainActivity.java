@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // Component.create() will no longer be generated if we have modules that require parameters
         // CarComponent component = DaggerCarComponent.create()
 
