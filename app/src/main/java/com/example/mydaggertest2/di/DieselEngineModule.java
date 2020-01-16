@@ -13,19 +13,23 @@ import dagger.Provides;
 @Module
 public class DieselEngineModule {
 
-//    private int horsePower;
+    private int horsePower;
 
-//    public DieselEngineModule(int horsePower) {
-//        this.horsePower = horsePower;
-//    }
-
-    public DieselEngineModule() {
-
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
     }
 
+//    public DieselEngineModule() {
+//
+//    }
+//
+//    @Provides
+//    int provideHorsePower(@Named("dieselParam") int horsePower) {
+//        return horsePower;
+//    }
 
     @Provides
-    int provideHorsePower(@Named("dieselParam") int horsePower) {
+    int provideHorsePower(int horsePower) {
         return horsePower;
     }
 
