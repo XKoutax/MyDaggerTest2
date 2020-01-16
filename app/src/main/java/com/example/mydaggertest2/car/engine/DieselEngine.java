@@ -3,6 +3,7 @@ package com.example.mydaggertest2.car.engine;
 import android.util.Log;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class DieselEngine implements Engine {
     private static final String TAG = "Car";

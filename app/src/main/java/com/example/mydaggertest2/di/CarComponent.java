@@ -15,7 +15,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {
         WheelsModule.class,
-        PetrolEngineModule.class,
+        DieselEngineModule.class,
         })
 public interface CarComponent {
 
@@ -35,6 +35,11 @@ public interface CarComponent {
 
         @BindsInstance
         Builder engineCapacity(@Named("engine capacity")int engineCapacity);
+
+//        Builder dieselEngineModule(DieselEngineModule dem);
+
+        @BindsInstance
+        Builder moduleParam(@Named("dieselParam")int someNumber);
 
         // dagger will automaticaly implement this method, we just have to declare it, because
         // we are overwriting the builder definition

@@ -1,23 +1,34 @@
 package com.example.mydaggertest2.di;
 
+import android.util.Log;
+
 import com.example.mydaggertest2.car.engine.DieselEngine;
 import com.example.mydaggertest2.car.engine.Engine;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class DieselEngineModule {
-    private int horsePower;
 
-    public DieselEngineModule(int horsePower) {
-        this.horsePower = horsePower;
+//    private int horsePower;
+
+//    public DieselEngineModule(int horsePower) {
+//        this.horsePower = horsePower;
+//    }
+
+    public DieselEngineModule() {
+
     }
+
 
     @Provides
-    int provideHorsePower() {
+    int provideHorsePower(@Named("dieselParam") int horsePower) {
         return horsePower;
     }
+
 
 
 //    We no longer need to manually instantiate DieselEngine obj using "new DieselEngine(horsePower)".
