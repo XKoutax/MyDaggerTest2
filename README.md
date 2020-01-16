@@ -445,6 +445,7 @@ We can use this ```@Named``` annotation wherever we have to provide or consume d
 
 _One way to avoid using string tags("horse power","engine capacity") that may be error prone, is by creating our own annotations (```@EngineCapacity``` for example)._
 
+- - - - 
 
 Now, with our custom ```Component.Builder``` , if we wanted to switch back to DieselEngineModule (replace ```PetrolEngineModule``` with ```DieselEngineModule``` in out CarComponent) and run the app, we'd the an error:  
 
@@ -453,7 +454,7 @@ Now, with our custom ```Component.Builder``` , if we wanted to switch back to Di
 What this means is that our Component/Builder does not know how to create a DieselEngineModule. That is because the ```DieselEngineModule``` constructor is parameterized. Dagger knows how to create an empty constructor, but in case the constructor has parameters, it doesn't know where to get them from.  
 
 In order to fix this, we can:  
-* 1. Create the module ourselves, in the Builder:
+* Create the module ourselves, in the Builder:
 ```java
 @Component.Builder
     interface Builder {
@@ -479,7 +480,7 @@ CarComponent component = DaggerCarComponent.builder()
                 .build();
 ```
 
-* 2. Bind the parameter.  
+* Bind the parameter.  
 Same as our ```PetrolEngineModule```, remove the parameter from the constructor. Add the integer inside our ```Component.Builder``` and change the provideHorsePower as such:
 ```java
  @Component.Builder
@@ -501,15 +502,33 @@ Same as our ```PetrolEngineModule```, remove the parameter from the constructor.
     
     
 ```java
+    @Module
+public class DieselEngineModule {
+
+//    private int horsePower;
+
+//    public DieselEngineModule(int horsePower) {
+//        this.horsePower = horsePower;
+//    }
+
+    public DieselEngineModule() {
+
+    }
+
+
+
     @Provides
     int provideHorsePower(@Named("dieselParam") int horsePower) {
         return horsePower;
     }
-    
+
     @Provides
     Engine provideEngine(DieselEngine dieselEngine) {
         return dieselEngine;
     }
+
+
+}
 ```
 Now the ```provideEngine(DieselEngine dieselEngine)``` method will be provided with the horsePower from the ```@Provides provideHorsePower(@Named("dieselParam") int horsePower)``` method. Now however, we are no longer saving the horsePower value inside our DieselEngineModule, since it's never set anymore.
 
