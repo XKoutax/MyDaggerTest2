@@ -535,6 +535,14 @@ Whenever the ```DieselEngineModule``` will be required to provide an ```int```, 
 In this case, the ```provideEngine(DieselEngine dieselEngine)``` method will be provided with the horsePower from the ```@Provides provideHorsePower(@Named("dieselParam") int horsePower)``` method. Now however, we are no longer saving the horsePower value inside our DieselEngineModule, since it's never set anymore.
 
 
+_*Recap :*_ 
+
+We use ```@Inject``` on classes that we own and wish to add to the dependancy graph, and ```@Provides``` inside modules, especially when we don't own the classes(classes from libraries) and when we need some configuration outside the constructor (Factory objects) 
+
+We use ```@Binds``` on abstract methods, in order to bind an implementation to its interface: 
+```@Binds abstract Random bindRandom(SecureRandom secureRandom);```. It's a more efficient approach instead of ```@Provides``` in such cases, because the generated implementation is likely to be more efficient.
+
+
 - - - -
 
 
