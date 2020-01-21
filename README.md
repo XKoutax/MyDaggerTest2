@@ -447,16 +447,18 @@ _One way to avoid using string tags("horse power","engine capacity") that may be
 
 - - - - 
 
-Now, with our custom ```Component.Builder``` , if we wanted to switch back to DieselEngineModule (replace ```PetrolEngineModule``` with ```DieselEngineModule``` in out CarComponent) and run the app, we'd the an error:  
+Now, with our custom ```Component.Builder``` , if we wanted to switch back to DieselEngineModule (replace ```PetrolEngineModule``` with ```DieselEngineModule``` in out CarComponent) and run the app, we'd get an error:  
 
 ```@Component.Builder is missing setters for required modules or components: [com.example.mydaggertest2.di.DieselEngineModule]```  
 
 What this means is that our Component/Builder does not know how to create a DieselEngineModule. That is because the ```DieselEngineModule``` constructor is parameterized. Dagger knows how to create an empty constructor, but in case the constructor has parameters, it doesn't know where to get them from.  
 
 In order to fix this, we can:  
+
+
 * Create the module ourselves, in the Builder:
 ```java
-@Component.Builder
+    @Component.Builder
     interface Builder {
 
         @BindsInstance
@@ -481,9 +483,10 @@ CarComponent component = DaggerCarComponent.builder()
 ```
 
 * Bind the parameter.  
-Same as our ```PetrolEngineModule```, remove the parameter from the constructor. Add the integer inside our ```Component.Builder``` and change the provideHorsePower as such:
+Same as our ```PetrolEngineModule```, remove the parameter from the constructor. Add the integer inside our ```Component.Builder```:
+
 ```java
- @Component.Builder
+    @Component.Builder
     interface Builder {
 
         @BindsInstance
@@ -499,23 +502,20 @@ Same as our ```PetrolEngineModule```, remove the parameter from the constructor.
 
     }
 ```
-    
+
+And change the ```provideHorsePower()``` method as such:
     
 ```java
     @Module
-public class DieselEngineModule {
+    public class DieselEngineModule {
 
-//    private int horsePower;
-
-//    public DieselEngineModule(int horsePower) {
-//        this.horsePower = horsePower;
-//    }
+    //private int horsePower;
+    //public DieselEngineModule(int horsePower) {
+    //    this.horsePower = horsePower;
+    //}
 
     public DieselEngineModule() {
-
     }
-
-
 
     @Provides
     int provideHorsePower(@Named("dieselParam") int horsePower) {
@@ -530,7 +530,9 @@ public class DieselEngineModule {
 
 }
 ```
-Now the ```provideEngine(DieselEngine dieselEngine)``` method will be provided with the horsePower from the ```@Provides provideHorsePower(@Named("dieselParam") int horsePower)``` method. Now however, we are no longer saving the horsePower value inside our DieselEngineModule, since it's never set anymore.
+Whenever the ```DieselEngineModule``` will be required to provide an ```int```, the ```@Provides int provideHorsePower(@Named("dieselParam") int horsePower)``` method will be called, which will always return the ```@Named("dieselParam")``` value saved in the ```CarComponent```. In other words, our ```@Named``` variable from within the ```Component``` will be injected inside our ```Module```, which in turn will provide / "inject" it to any of it's ```@Provides``` methods when needed.
+
+In this case, the ```provideEngine(DieselEngine dieselEngine)``` method will be provided with the horsePower from the ```@Provides provideHorsePower(@Named("dieselParam") int horsePower)``` method. Now however, we are no longer saving the horsePower value inside our DieselEngineModule, since it's never set anymore.
 
 
 - - - -
