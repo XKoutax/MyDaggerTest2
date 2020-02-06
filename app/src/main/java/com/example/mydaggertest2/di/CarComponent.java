@@ -21,7 +21,7 @@ public interface CarComponent {
 
     Car getCar();
 
-//        Dagger 2 does not inject fields automatically. It can also not inject private fields.
+//    Dagger 2 does not inject fields automatically. It can also not inject private fields.
 //    If you want to use field injection you have to define a method in your @Component interface
 //    which takes the instance into which you would like Dagger 2 to inject an object into this field.
 //    ex: all fields with @Inject from MainActivity will be injected once this method is used.
@@ -39,10 +39,6 @@ public interface CarComponent {
         @BindsInstance
         Builder moduleParam(@Named("dieselParam")int someNumber);
 
-//        Builder dieselEngineModule(DieselEngineModule dem);
-
-        // dagger will automaticaly implement this method, we just have to declare it, because
-        // we are overwriting the builder definition
         CarComponent build();
 
     }

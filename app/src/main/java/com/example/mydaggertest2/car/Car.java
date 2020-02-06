@@ -62,7 +62,7 @@ public class Car {
 
     public void drive() {
         engine.start();
-        Log.d(TAG, driver.hashCode() + " drives " + this.hashCode());
+        Log.d(TAG, "Driver[" + driver.hashCode() + "] drives Car[" + this.hashCode() + "]");
     }
 
 

@@ -33,7 +33,7 @@ public class DieselEngineModule {
         return horsePower;
     }
 
-//    We no longer need to manually instantiate DieselEngine obj using "new DieselEngine(horsePower)".
+//    We no longer need to manually instantiate DieselEngine obj ( new DieselEngine(horsePower) )
 //    Because we created a "provideHorsePower()" method, and we @Inject-ed the constructor of
 //    DieselEngine "DieselEngine(int horsePower){..}" so that the provideHorsePower() can inject into it.
     @Provides
