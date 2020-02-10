@@ -471,7 +471,32 @@ What this means is that our Component/Builder does not know how to create a Dies
 
 In order to fix this, we can:  
 
-* Create the module ourselves, in the Builder:
+* Keep the constructor and create the module ourselves(in the Builder)
+
+- Kept constructor:
+```java
+@Module
+public class DieselEngineModule {
+
+    private int horsePower;
+
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Provides
+    int provideHorsePower() {
+        return horsePower;
+    }
+
+    @Provides
+    Engine provideEngine(DieselEngine dieselEngine) {
+        return dieselEngine;
+    }
+}
+```
+
+and Builder method for creating the Module:
 ```java
     @Component.Builder
     interface Builder {
@@ -488,7 +513,7 @@ In order to fix this, we can:
 
     }
 ```
-and declare it when we create the component (in this case, in MainActivity):
+This way, we will declare it when we create the component:
 ```java
 CarComponent component = DaggerCarComponent.builder()
                 .dieselEngineModule(new DieselEngineModule(100))
@@ -496,10 +521,24 @@ CarComponent component = DaggerCarComponent.builder()
                 .engineCapacity(1400)
                 .build();
 ```
+- - - -
+* OR remove the parametrized constructor, and bind the parameter:
+Same as our ```PetrolEngineModule```, remove the parameter from the constructor:
+```java
+@Module
+public class DieselEngineModule {
+    @Provides
+    int provideHorsePower(@Named("dieselParam") int horsePower) {
+        return horsePower;
+    }
+    @Provides
+    Engine provideEngine(DieselEngine dieselEngine) {
+        return dieselEngine;
+    }
+}
+```
 
-* Bind the parameter.  
-Same as our ```PetrolEngineModule```, remove the parameter from the constructor. Add the integer inside our ```Component.Builder```:
-
+And add the integer inside our ```Component.Builder```:
 ```java
     @Component.Builder
     interface Builder {
@@ -518,34 +557,15 @@ Same as our ```PetrolEngineModule```, remove the parameter from the constructor.
     }
 ```
 
-And change the ```provideHorsePower()``` method as such:
-    
+And set the integer when we create the component:
 ```java
-    @Module
-    public class DieselEngineModule {
-
-    //private int horsePower;
-    //public DieselEngineModule(int horsePower) {
-    //    this.horsePower = horsePower;
-    //}
-
-    public DieselEngineModule() {
-    }
-
-    @Provides
-    int provideHorsePower(@Named("dieselParam") int horsePower) {
-        return horsePower;
-    }
-
-    @Provides
-    Engine provideEngine(DieselEngine dieselEngine) {
-        return dieselEngine;
-    }
-
-
-}
+component = DaggerCarComponent.builder()
+                .horsePower(120)
+                .engineCapacity(1400)
+                .moduleParam(16)
+                .build();
 ```
-Whenever the ```DieselEngineModule``` will be required to provide an ```int```, the ```@Provides int provideHorsePower(@Named("dieselParam") int horsePower)``` method will be called, which will always return the ```@Named("dieselParam")``` value saved in the ```CarComponent```. In other words, our ```@Named``` variable from within the ```Component``` will be injected inside our ```Module```, which in turn will provide / "inject" it to any of it's ```@Provides``` methods when needed.
+In this case, whenever the ```DieselEngineModule``` will be required to provide an ```int```, the ```@Provides int provideHorsePower(@Named("dieselParam") int horsePower)``` method will be called, which will always return the ```@Named("dieselParam")``` value saved in the ```CarComponent```. In other words, our ```@Named``` variable from within the ```Component``` will be injected inside our ```Module```, which in turn will provide / "inject" it to any of it's ```@Provides``` methods when needed.
 
 In this case, the ```provideEngine(DieselEngine dieselEngine)``` method will be provided with the horsePower from the ```@Provides provideHorsePower(@Named("dieselParam") int horsePower)``` method. Now however, we are no longer saving the horsePower value inside our DieselEngineModule, since it's never set anymore.
 
