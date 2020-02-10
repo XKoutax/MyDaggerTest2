@@ -2,6 +2,7 @@ package com.example.mydaggertest2.di;
 
 import com.example.mydaggertest2.car.Car;
 import com.example.mydaggertest2.MainActivity;
+import com.example.mydaggertest2.car.engine.DieselEngine;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -15,16 +16,12 @@ import dagger.Component;
 @Singleton
 @Component(modules = {
         WheelsModule.class,
-        PetrolEngineModule.class,
+        DieselEngineModule.class,
         })
 public interface CarComponent {
 
     Car getCar();
 
-//    Dagger 2 does not inject fields automatically. It can also not inject private fields.
-//    If you want to use field injection you have to define a method in your @Component interface
-//    which takes the instance into which you would like Dagger 2 to inject an object into this field.
-//    ex: all fields with @Inject from MainActivity will be injected once this method is used.
     void inject(MainActivity mainActivity);
 
     @Component.Builder
@@ -38,6 +35,8 @@ public interface CarComponent {
 
         @BindsInstance
         Builder moduleParam(@Named("dieselParam")int someNumber);
+
+        Builder dieselEngineModule(DieselEngineModule dem);
 
         CarComponent build();
 

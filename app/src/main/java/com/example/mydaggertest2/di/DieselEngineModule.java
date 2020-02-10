@@ -10,32 +10,35 @@ import javax.inject.Named;
 import dagger.Module;
 import dagger.Provides;
 
-@Module
-public class DieselEngineModule {
-
-    private int horsePower;
-//
-//    public DieselEngineModule() {
-//
-//    }
+//@Module
+//public class DieselEngineModule {
 //
 //    @Provides
 //    int provideHorsePower(@Named("dieselParam") int horsePower) {
 //        return horsePower;
 //    }
+//
+//    @Provides
+//    Engine provideEngine(DieselEngine dieselEngine) {
+//        return dieselEngine;
+//    }
+//}
+
+
+@Module
+public class DieselEngineModule {
+
+    private int horsePower;
 
     public DieselEngineModule(int horsePower) {
         this.horsePower = horsePower;
     }
 
     @Provides
-    int provideHorsePower(int horsePower) {
+    int provideHorsePower() {
         return horsePower;
     }
 
-//    We no longer need to manually instantiate DieselEngine obj ( new DieselEngine(horsePower) )
-//    Because we created a "provideHorsePower()" method, and we @Inject-ed the constructor of
-//    DieselEngine "DieselEngine(int horsePower){..}" so that the provideHorsePower() can inject into it.
     @Provides
     Engine provideEngine(DieselEngine dieselEngine) {
         return dieselEngine;

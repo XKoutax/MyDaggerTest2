@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.mydaggertest2.di.CarComponent;
 import com.example.mydaggertest2.di.DaggerCarComponent;
+import com.example.mydaggertest2.di.DieselEngineModule;
 
 public class MyAppplication extends Application {
 
@@ -19,7 +20,7 @@ public class MyAppplication extends Application {
         // the objects will be created again.
         // So in order to make it a true "Singleton", we moved the component here.
         component = DaggerCarComponent.builder()
-//                .dieselEngineModule(new DieselEngineModule(100))
+                .dieselEngineModule(new DieselEngineModule(100))
                 .horsePower(120)
                 .engineCapacity(1400)
                 .moduleParam(16)
