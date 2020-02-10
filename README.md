@@ -446,15 +446,30 @@ We can use this ```@Named``` annotation wherever we have to provide or consume d
 _One way to avoid using string tags("horse power","engine capacity") that may be error prone, is by creating our own annotations (```@EngineCapacity``` for example)._
 
 - - - - 
+### Important!
+Now, with our custom ```Component.Builder``` :
+```java
+@Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder horsePower(@Named("horse power")int horsePower);
 
-Now, with our custom ```Component.Builder``` , if we wanted to switch back to DieselEngineModule (replace ```PetrolEngineModule``` with ```DieselEngineModule``` in out CarComponent) and run the app, we'd get an error:  
+        @BindsInstance
+        Builder engineCapacity(@Named("engine capacity")int engineCapacity);
+
+        @BindsInstance
+        Builder moduleParam(@Named("dieselParam")int someNumber);
+        CarComponent build();
+    }
+```
+
+if we wanted to switch back to DieselEngineModule (replace ```PetrolEngineModule``` with ```DieselEngineModule``` in out CarComponent) and run the app, we'd get an error:  
 
 ```@Component.Builder is missing setters for required modules or components: [com.example.mydaggertest2.di.DieselEngineModule]```  
 
 What this means is that our Component/Builder does not know how to create a DieselEngineModule. That is because the ```DieselEngineModule``` constructor is parameterized. Dagger knows how to create an empty constructor, but in case the constructor has parameters, it doesn't know where to get them from.  
 
 In order to fix this, we can:  
-
 
 * Create the module ourselves, in the Builder:
 ```java
@@ -570,6 +585,34 @@ Now we'll have the same driver for our 2 different cars.
 
 __NOTE:__ if we were to create 2 CarComponents and get a car from each, and call our ```.drive()``` method, the Driver object would be different. That is because ```@Singleton``` only works within the same Component object. So, if we want a real application-wide singleton, you have to instantiate the Component once, in the application class (since Application wraps the entire lifetime/lifecycle of the app) and acces the Component from there.
 
+```java
+public class MyAppplication extends Application {
+
+    private CarComponent component;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // move the creation of the CarComponent here, so that it will be created only once, when the application starts. 
+        // @Singleton on @Components will create objects only once, for the SAME component. 
+        // If we rotate screen(destroy and re-create activity) or make another component,
+        // the objects will be created again.
+        // So in order to make it a true "Singleton", we moved the component here.
+        component = DaggerCarComponent.builder()
+//                .dieselEngineModule(new DieselEngineModule(100))
+                .horsePower(120)
+                .engineCapacity(1400)
+                .moduleParam(16)
+                .build();
+    }
+
+    public CarComponent getAppComponent() {
+        return component;
+    }
+
+}
+```
 
 - - - -
 
