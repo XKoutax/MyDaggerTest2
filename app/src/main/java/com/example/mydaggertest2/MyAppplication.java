@@ -2,23 +2,23 @@ package com.example.mydaggertest2;
 
 import android.app.Application;
 
-import com.example.mydaggertest2.di.ActivityComponent;
-import com.example.mydaggertest2.di.DaggerActivityComponent;
+import com.example.mydaggertest2.di.CarComponent;
+import com.example.mydaggertest2.di.DaggerCarComponent;
 
 public class MyAppplication extends Application {
 
-    private ActivityComponent component;
+    private CarComponent component;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        // move the creation of the ActivityComponent here, so that it will be created only once, when
+        // move the creation of the CarComponent here, so that it will be created only once, when
         // the application starts. @Singleton on @Components will create objects only once, for the
         // SAME component. If we rotate screen(destroy and re-create activity) or make another component,
         // the objects will be created again.
         // So in order to make it a true "Singleton", we moved the component here.
-        component = DaggerActivityComponent.builder()
+        component = DaggerCarComponent.builder()
 //                .dieselEngineModule(new DieselEngineModule(100))
                 .horsePower(120)
                 .engineCapacity(1400)
@@ -26,7 +26,7 @@ public class MyAppplication extends Application {
                 .build();
     }
 
-    public ActivityComponent getAppComponent() {
+    public CarComponent getAppComponent() {
         return component;
     }
 

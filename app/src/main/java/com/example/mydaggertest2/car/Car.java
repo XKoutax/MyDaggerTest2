@@ -3,11 +3,9 @@ package com.example.mydaggertest2.car;
 import android.util.Log;
 
 import com.example.mydaggertest2.car.engine.Engine;
-import com.example.mydaggertest2.di.PerActivity;
 
 import javax.inject.Inject;
 
-@PerActivity
 public class Car {
     private static final String TAG = "Car";
 
