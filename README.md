@@ -473,7 +473,7 @@ In order to fix this, we can:
 
 * Keep the constructor and create the module ourselves(in the Builder)
 
-- Kept constructor:
+Kept constructor:
 ```java
 @Module
 public class DieselEngineModule {
@@ -523,6 +523,7 @@ CarComponent component = DaggerCarComponent.builder()
 ```
 - - - -
 * OR remove the parametrized constructor, and bind the parameter:
+
 Same as our ```PetrolEngineModule```, remove the parameter from the constructor:
 ```java
 @Module
