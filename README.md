@@ -635,6 +635,17 @@ public class MyAppplication extends Application {
 }
 ```
 
+Don't forget to add it in the manifest file ```AndroidManifest.xml```:
+```xml
+...
+    <application
+        android:name=".MyAppplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+    ...
+...
+```
+
 - - - -
 
 
