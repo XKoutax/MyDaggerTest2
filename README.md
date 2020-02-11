@@ -725,6 +725,104 @@ _Members-injection methods have a single parameter and inject dependencies into 
    SomeType injectAndReturnSomeType(SomeType someType);
 
 
+
+Our Driver class has @Inject constructor, so dagger can instantiate it directly. But to ake it more clear, we'll assume we dont own the driver class, and we'll make a module for it.
+
+```java
+public class Driver {
+    //we don't own this class so we can't annotate it with @Inject
+}
+```
+
+```java
+@Module
+public abstract class DriverModule {
+    
+    @Provides
+    @Singleton
+    static Driver provideDriver() {
+        return new Driver();
+    }
+}
+```
+
+And in AppComponent, add this module to the declaration of the Component:
+
+```java
+@Singleton
+@Component(modules = DriverModule.class)
+public interface AppComponent {
+
+    Driver getDiver();
+
+}
+```
+Now it is more clear that our AppComponent contains the DriverModule, so it is responsible for provider a Driver. And our ActivityComponent does not.
+
+Add the dependancy to AppComponent in the ActivityComponent:
+
+```java
+@PerActivity
+@Component(dependencies = AppComponent.class,
+        modules = {
+                WheelsModule.class,
+                PetrolEngineModule.class,
+        })
+public interface ActivityComponent {
+```
+
+and in its Builder, add the AppComponent. Remember that if we didn't implement the Component.Builder ourselves, we woudn't have to do this because it would be generated automaticaly. But since we did, we have to explicitely add AppComponent to the Builder.
+
+```java
+@PerActivity
+@Component(dependencies = AppComponent.class,
+        modules = {
+                WheelsModule.class,
+                PetrolEngineModule.class,
+        })
+public interface ActivityComponent {
+
+    Car getCar();
+
+    void inject(MainActivity mainActivity);
+
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder horsePower(@Named("horse power") int horsePower);
+
+        @BindsInstance
+        Builder engineCapacity(@Named("engine capacity") int engineCapacity);
+
+        @BindsInstance
+        Builder moduleParam(@Named("dieselParam") int someNumber);
+
+        Builder appComponent(AppComponent component);
+
+        ActivityComponent build();
+
+    }
+
+}
+```
+
+Now we need to instante the ActivityComponent inside our MainActivity, instead of the Appcomponent.
+
+```java
+ActivityComponent component = DaggerActivityComponent.builder()
+                .horsePower(120)
+                .engineCapacity(1400)
+                .moduleParam(30)
+                .appComponent(((MyAppplication)getApplication()).getAppComponent())
+                .build();
+```
+
+So now we will get the same Driver throughout our entire Application. And the same Car throughout our entire Activity. 
+
+Upon first starting the app, we will have the same driver, and the same car now(because it is activity scoped). And when we rotate the device, the driver will stay the same, but the car will change.
+When we
+
    
    
     
