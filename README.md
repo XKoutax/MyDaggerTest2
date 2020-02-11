@@ -821,8 +821,34 @@ ActivityComponent component = DaggerActivityComponent.builder()
 So now we will get the same Driver throughout our entire Application. And the same Car throughout our entire Activity. 
 
 Upon first starting the app, we will have the same driver, and the same car now(because it is activity scoped). And when we rotate the device, the driver will stay the same, but the car will change.
-When we
 
-   
-   
-    
+
+
+- - - -
+
+
+## 8. Subcomponents
+
+In the previous step, in order to "combine" / make the 2 components communicate, we had to:
+
+* add AppComponent as a dependency inside the ActivityComponent
+```java
+@Component(dependencies = AppComponent.class, modules = { ... })
+```
+* add an AppComponent setter method to the ActivityComponent Component.Builder(if we've implemented the Component.Builder), and instantiate it when we first built the ActivityComponent 
+```java
+@Component.Builder
+    interface Builder {
+        ...
+        Builder appComponent(AppComponent component);
+        ActivityComponent build();
+    }
+```
+* expose the Driver inside the AppComponent
+```java
+@Singleton
+@Component(modules = DriverModule.class)
+public interface AppComponent {
+    Driver getDiver();
+}
+```
