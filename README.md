@@ -711,14 +711,20 @@ _Doc: Component must have signatures that conform to either provision or members
 _Provision methods have no parameters and return an injected or provided type. The following are all valid provision method declarations:_
 
 SomeType getSomeType();
+
 Provider<SomeType> getSomeTypeProvider();
+
 Lazy<SomeType> getLazySomeType();
+
     
 _Members-injection methods have a single parameter and inject dependencies into each of the Inject-annotated fields and methods of the passed instance. A members-injection method may be void or return its single parameter as a convenience for chaining. The following are all valid members-injection method declarations:_
 
 
    void injectSomeType(SomeType someType);
+
    SomeType injectAndReturnSomeType(SomeType someType);
+
+
    
    
     
