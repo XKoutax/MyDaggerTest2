@@ -649,4 +649,76 @@ Don't forget to add it in the manifest file ```AndroidManifest.xml```:
 - - - -
 
 
-##  7. 
+##  7. Custom Scopes / Annotation
+
+Go inside the ```@Singleton``` annotation class, copy the definition and create a new annotation called ```@PerActivity```. Annotate the Car class with it.
+
+```java
+@PerActivity
+public class Car {
+    private static final String TAG = "Car";
+....
+```
+This will now work exactly like the ```@Singleton``` annotation. It tells Dagger to only create a single instance of a Car within the same component.
+
+In other words, it does not know when the Car object should be destroyed. It works only as "documentation". If we used this in our AppComponent, Dagger would still just create an Application-wide singleton. We are responsible for actually realising this new scope functionality.
+
+The way we do this is by creating a second component, which will only live as long as the Activity. Unlike the component that we declared in our Application class, which lives as long as the Application.
+
+
+We will use the CarComponent as our ```ActivityComponent```, and create a new Component for the App class.
+* rename CarComponent to ```  ``` and change ```@Singleton``` to ```@PerActivity```
+```java
+@PerActivity
+@Component(modules = {
+        WheelsModule.class,
+        DieselEngineModule.class,
+        })
+public interface ActivityComponent {
+
+    Car getCar();
+    ...
+...
+```
+
+* create the AppComponent, which we want it scoped with ```@Singleton```
+```java
+// we want this Component to provide the objects that are scopes with @Singleton ( just Driver ),
+// because we want to get this object from our AppComponent, and NOT from our ActivityComponent (which has @PerActivity, and not @Singleton)
+@Singleton
+@Component
+public interface AppComponent {
+}
+```
+
+_What we'll later want to do is connect our 2 components. We want to instantiate an ActivityComponent in our Activity, but when we want to get a Driver,we DON'T instantiate it from ActivityComponent, but get it from the AppComponent._
+
+We must define what we want to expose to the outside from the AppComponent, otherwise the ActivityComponent won't have access to it.
+
+```java
+@Singleton
+@Component
+public interface AppComponent {
+
+    Driver getDiver();
+
+}
+```
+_(Again, the name of the provision method doesn't matter)_
+
+_Doc: Component must have signatures that conform to either provision or members-injection contracts._
+
+_Provision methods have no parameters and return an injected or provided type. The following are all valid provision method declarations:_
+
+SomeType getSomeType();
+Provider<SomeType> getSomeTypeProvider();
+Lazy<SomeType> getLazySomeType();
+    
+_Members-injection methods have a single parameter and inject dependencies into each of the Inject-annotated fields and methods of the passed instance. A members-injection method may be void or return its single parameter as a convenience for chaining. The following are all valid members-injection method declarations:_
+
+
+   void injectSomeType(SomeType someType);
+   SomeType injectAndReturnSomeType(SomeType someType);
+   
+   
+    
