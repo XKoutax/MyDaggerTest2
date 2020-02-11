@@ -3,42 +3,38 @@ package com.example.mydaggertest2.di;
 import com.example.mydaggertest2.MainActivity;
 import com.example.mydaggertest2.car.Car;
 
-import javax.inject.Named;
-
-import dagger.BindsInstance;
-import dagger.Component;
+import dagger.Subcomponent;
 
 
 @PerActivity
-@Component(dependencies = AppComponent.class,
-        modules = {
-                WheelsModule.class,
-                PetrolEngineModule.class,
-        })
+@Subcomponent(modules = {
+        WheelsModule.class,
+        DieselEngineModule.class,
+})
 public interface ActivityComponent {
 
     Car getCar();
 
     void inject(MainActivity mainActivity);
 
-    @Component.Builder
-    interface Builder {
-
-        @BindsInstance
-        Builder horsePower(@Named("horse power") int horsePower);
-
-        @BindsInstance
-        Builder engineCapacity(@Named("engine capacity") int engineCapacity);
-
-        @BindsInstance
-        Builder moduleParam(@Named("dieselParam") int someNumber);
-
-        // Component dependencies must have a setter method IF we implemented the Component.Builder
-        // They are generated automatically if we don't implement the Component.Builder
-        Builder appComponent(AppComponent component);
-
-        ActivityComponent build();
-
-    }
+//    @Component.Builder
+//    interface Builder {
+//
+//        @BindsInstance
+//        Builder horsePower(@Named("horse power") int horsePower);
+//
+//        @BindsInstance
+//        Builder engineCapacity(@Named("engine capacity") int engineCapacity);
+//
+//        @BindsInstance
+//        Builder moduleParam(@Named("dieselParam") int someNumber);
+//
+//        // Component dependencies must have a setter method IF we implemented the Component.Builder
+//        // They are generated automatically if we don't implement the Component.Builder
+//        Builder appComponent(AppComponent component);
+//
+//        ActivityComponent build();
+//
+//    }
 
 }

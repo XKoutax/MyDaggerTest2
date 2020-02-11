@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mydaggertest2.car.Car;
 import com.example.mydaggertest2.di.ActivityComponent;
-import com.example.mydaggertest2.di.DaggerActivityComponent;
+import com.example.mydaggertest2.di.DieselEngineModule;
 
 import javax.inject.Inject;
 
@@ -25,12 +25,15 @@ public class MainActivity extends AppCompatActivity {
 
 //        ActivityComponent component = ((MyAppplication)getApplication()).getAppComponent();
 
-        ActivityComponent component = DaggerActivityComponent.builder()
-                .horsePower(120)
-                .engineCapacity(1400)
-                .moduleParam(30)
-                .appComponent(((MyAppplication)getApplication()).getAppComponent())
-                .build();
+//        ActivityComponent component = DaggerActivityComponent.builder()
+//                .horsePower(120)
+//                .engineCapacity(1400)
+//                .moduleParam(30)
+//                .appComponent(((MyAppplication)getApplication()).getAppComponent())
+//                .build();
+
+        ActivityComponent component = ((MyAppplication)getApplication()).getAppComponent()
+                .getActivityComponent(new DieselEngineModule(120));
 
         // 1. Inject the car manually, by calling the getCar() method
         car1 = component.getCar();
