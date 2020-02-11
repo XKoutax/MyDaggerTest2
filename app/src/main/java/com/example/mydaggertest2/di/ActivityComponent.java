@@ -33,6 +33,8 @@ public interface ActivityComponent {
         @BindsInstance
         Builder moduleParam(@Named("dieselParam") int someNumber);
 
+        // Component dependencies must have a setter method IF we implemented the Component.Builder
+        // They are generated automatically if we don't implement the Component.Builder
         Builder appComponent(AppComponent component);
 
         ActivityComponent build();
