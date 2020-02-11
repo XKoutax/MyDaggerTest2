@@ -844,6 +844,14 @@ In the previous step, in order to "combine" / make the 2 components communicate,
         ActivityComponent build();
     }
 ```
+```java
+ActivityComponent component = DaggerActivityComponent.builder()
+                .horsePower(120)
+                .engineCapacity(1400)
+                .moduleParam(30)
+                .appComponent(((MyAppplication)getApplication()).getAppComponent())
+                .build();
+```
 * expose the Driver inside the AppComponent
 ```java
 @Singleton
@@ -852,3 +860,81 @@ public interface AppComponent {
     Driver getDiver();
 }
 ```
+If we'd remove the ```getDriver()``` provision method from the AppComponent, the project wouldn't compile anymore, because ActivityComponent wouldn't know where it can get the Driver from. Also, if we wuld add other object to the AppComponent, besides the Driver (DriverModule), the ActivityComponent wouldnt be abe to access these objects unless we also expose them explicitely through a provision method.
+
+There is another way however, to connect the 2 components. Instead of declaring the AppComponent as a dependency of the ActivityComponent, we can turn the ActivityComponent into a __sub-component__ of the AppComponent. The difference is that a ```Subcomponent``` can access ALL the objects of the parent component. So we would be able to remove the ```getDriver()``` method, and any other possible provision methods.
+
+
+__First:__ turn the ActivityComponent into an SubComponent. Also change the module required to DieselEngineModule, and remove the @Component.Builder _for now_, since Subcomponents have a different kind of builders. (_more on that later._) And remove the ```getDriver()``` method.
+```java
+@PerActivity
+@Subcomponent(modules = {
+        WheelsModule.class,
+        DieselEngineModule.class,
+})
+public interface ActivityComponent {
+    Car getCar();
+    void inject(MainActivity mainActivity);
+}
+```
+
+Our subcomponent will be able to access the Driver -- DriverModule from the AppComponent without us having to expose it explicitely. So we remove the ```getDriver()``` method.
+```java
+@Singleton
+@Component(modules = DriverModule.class)
+public interface AppComponent {
+     //Driver getDriver()
+}
+```
+
+What we need to do now though is add a provision method for our subComponent inside the mainComponent.
+```java
+@Singleton
+@Component(modules = DriverModule.class)
+public interface AppComponent {
+     ActivityComponent getActivityComponent();
+}
+```
+This method will also take as parameters ALL moduled of the subcomponent (ActivityComponent) that __1.are not abstract__ and __2.dont have default constructors__. 
+
+ActivityComponent has WheelsModule (which is abstract, therefore takes no constructor parameters) and DieselEngineModule, which requires horsePower to it's construcor:
+```java
+@Module
+public class DieselEngineModule {
+
+    private int horsePower;
+
+    public DieselEngineModule(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Provides
+    int provideHorsePower() {
+        return horsePower;
+    }
+
+    @Provides
+    Engine provideEngine(DieselEngine dieselEngine) {
+        return dieselEngine;
+    }
+}
+```
+
+so we will add it to the SubComponent provision method, so that we may pass the parameter to the Module constructor at runtime:
+
+```java
+@Singleton
+@Component(modules = DriverModule.class)
+public interface AppComponent {
+    ActivityComponent getActivityComponent(DieselEngineModule dem);
+}
+```
+This is called a _Factory Method_. 
+
+Now in the MainActivity, we will retrieve the ActivityComponent this way:
+```java
+ActivityComponent component = ((MyAppplication)getApplication()).getAppComponent()
+                .getActivityComponent(new DieselEngineModule(120));
+```
+We dont have to call build, since this method already returns the finished/built component.
+
