@@ -691,7 +691,7 @@ public interface AppComponent {
 }
 ```
 
-_What we'll later want to do is connect our 2 components. We want to instantiate an ActivityComponent in our Activity, but when we want to get a Driver,we DON'T instantiate it from ActivityComponent, but get it from the AppComponent._
+(_What we'll later want to do is connect our 2 components. We want to instantiate an ActivityComponent in our Activity, but when we want to get a Driver,we DON'T instantiate it from ActivityComponent, but get it from the AppComponent._)
 
 We must define what we want to expose to the outside from the AppComponent, otherwise the ActivityComponent won't have access to it.
 
@@ -704,29 +704,8 @@ public interface AppComponent {
 
 }
 ```
-_(Again, the name of the provision method doesn't matter)_
 
-_Doc: Component must have signatures that conform to either provision or members-injection contracts._
-
-_Provision methods have no parameters and return an injected or provided type. The following are all valid provision method declarations:_
-
-SomeType getSomeType();
-
-Provider<SomeType> getSomeTypeProvider();
-
-Lazy<SomeType> getLazySomeType();
-
-    
-_Members-injection methods have a single parameter and inject dependencies into each of the Inject-annotated fields and methods of the passed instance. A members-injection method may be void or return its single parameter as a convenience for chaining. The following are all valid members-injection method declarations:_
-
-
-   void injectSomeType(SomeType someType);
-
-   SomeType injectAndReturnSomeType(SomeType someType);
-
-
-
-Our Driver class has @Inject constructor, so dagger can instantiate it directly. But to ake it more clear, we'll assume we dont own the driver class, and we'll make a module for it.
+Our Driver class has @Inject constructor, so dagger can instantiate it directly. But to make it more clear, we'll assume we dont own the driver class, and we'll make a module for it.
 
 ```java
 public class Driver {
@@ -745,9 +724,7 @@ public abstract class DriverModule {
     }
 }
 ```
-
-And in AppComponent, add this module to the declaration of the Component:
-
+And in AppComponent:
 ```java
 @Singleton
 @Component(modules = DriverModule.class)
@@ -757,7 +734,7 @@ public interface AppComponent {
 
 }
 ```
-Now it is more clear that our AppComponent contains the DriverModule, so it is responsible for provider a Driver. And our ActivityComponent does not.
+Now it is clear that our AppComponent contains the DriverModule, so it is responsible for providing a Driver. And our ActivityComponent does not.
 
 Add the dependancy to AppComponent in the ActivityComponent:
 
@@ -937,4 +914,8 @@ ActivityComponent component = ((MyAppplication)getApplication()).getAppComponent
                 .getActivityComponent(new DieselEngineModule(120));
 ```
 We dont have to call build, since this method already returns the finished/built component.
+
+- - - -
+
+## 9. @Subcomponent.Builder
 
