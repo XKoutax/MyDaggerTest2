@@ -17,6 +17,8 @@ public interface ActivityComponent {
 
     void inject(MainActivity mainActivity);
 
+    //we commented out the Builder, because we no longer need the Named horsePower and engineCapacity variables, since we r using the DieselEngineModule instead of the PetrolEngineModule
+
 //    @Component.Builder
 //    interface Builder {
 //

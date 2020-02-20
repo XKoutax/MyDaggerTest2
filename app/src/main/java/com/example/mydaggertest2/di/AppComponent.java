@@ -13,7 +13,7 @@ import dagger.Component;
 @Component(modules = DriverModule.class)
 public interface AppComponent {
 
-    // add provision method which returns the SubComponent type, and takes as parameters
+    // add provision method which returns the SubComponent type, and takes as parameters:
     // all modules of the subComponent that: are not abstract AND don't have a default constructor
     // ActivityComponent has WheelsModule and DieselEngineModule.
     //                       WheelsModule is abstract
