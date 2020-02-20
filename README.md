@@ -906,7 +906,7 @@ public interface AppComponent {
     ActivityComponent getActivityComponent(DieselEngineModule dem);
 }
 ```
-This is called a _Factory Method_. 
+This is called a _Factory Method_. Ocassionally they are called plus(), a Dagger1 naming convention.
 
 Now in the MainActivity, we will retrieve the ActivityComponent this way:
 ```java
@@ -919,3 +919,7 @@ We dont have to call build, since this method already returns the finished/built
 
 ## 9. @Subcomponent.Builder
 
+NOTE:   
+Subcomponents - A subcomponent can access the whole object graph of it's parent. So ActivityComponent can access all modules from AppComponent
+
+Dependencies - A component that DEPENDS on another component via a component dependency (@Component{dependencies = ..., modules = ...}) can only access objects that the parent component exposes explicitly (provisional methods - ```Driver getDriver()```)
